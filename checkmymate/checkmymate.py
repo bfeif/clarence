@@ -1,7 +1,12 @@
-from flask import Flask, render_template, request
-app = Flask(__name__)
+from flask import (
+    Blueprint, flash, redirect, render_template, request, url_for
+)
+# app = Flask(__name__)
 
-@app.route("/", methods=['GET', 'POST'])
+
+bp = Blueprint('checkmymate', __name__)
+
+@bp.route("/", methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         if request.form.get('action1') == 'VALUE1':
@@ -11,6 +16,6 @@ def index():
         else:
             pass # unknown
     elif request.method == 'GET':
-        return render_template('index.html', form=form)
+        return render_template('index.html')#, form=form)
     
     return render_template("index.html")

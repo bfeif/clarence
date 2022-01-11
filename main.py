@@ -4,6 +4,9 @@
 # https://github.com/cyanfish/python-lichess/blob/8deea5dda8965b90915c744d65f2a4bc3ee085e5/lichess/api.py#L89
 # there's something with specifying the object_type=lichess.format.GAME_STREAM_OBJECT and passing it to the parser
 
+# RESOURCES
+# https://devcenter.heroku.com/articles/flask-memcache
+
 import pandas as pd
 import lichess.api
 import requests
