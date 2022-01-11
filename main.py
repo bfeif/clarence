@@ -14,7 +14,7 @@ def process_game_dict(game_dict, username):
     Processes a single game dictionary, as it comes from the result of lichess.api.user_games().
     """
     opening_name = game_dict["opening"]["name"]
-    opening_name_simple = game_dict["opening"]["name"].split(':')[0]
+    opening_name_simple = opening_name.split(':')[0]
     opening_code = game_dict["opening"]["eco"]
     color = "white" if game_dict["players"]["white"]["user"]["id"]==username else "black"
     if "winner" not in game_dict:
@@ -30,14 +30,14 @@ def process_game_dict(game_dict, username):
             "points": points}
 
 # load the games
-user = 'normanrookwell'
-payload = {
+user = 'madmaxmatze'
+query = {
     "opening": True,
     "moves": False,
     "sort": "dateDesc",
     # "max": 300
     }
-games = [process_game_dict(g, user) for g in lichess.api.user_games(user, **payload)]
+games = [process_game_dict(g, user) for g in lichess.api.user_games(user, **query)]
 
 # test
 games = pd.DataFrame(games)
@@ -46,7 +46,8 @@ for color in ["white", "black"]:
     display_games = \
         (games
          [games["color"]==color]
-         .groupby("opening_name_simple")["points"]
+         .groupby("opening_name_simple")
+         ["points"]
          .agg(["count", "mean"])
          .sort_values("count", ascending=False)
          .rename({"opening_name_simple": "opening", "count": "num_games", "mean": "avg_points_per_game"})
