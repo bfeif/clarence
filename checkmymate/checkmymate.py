@@ -1,16 +1,10 @@
-from flask import (
-    Blueprint, flash, redirect, render_template, request, url_for
-)
-# app = Flask(__name__)
-
-
+from flask import Blueprint, Flask, render_template, request
 bp = Blueprint('checkmymate', __name__)
 
 @bp.route("/", methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         if request.form.get('username_entry')=='VALUE1':
-            
             pass # do something
         else:
             pass # unknown
