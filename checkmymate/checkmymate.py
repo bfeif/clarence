@@ -1,4 +1,5 @@
 from flask import Blueprint, Flask, render_template, request, redirect, url_for
+from . import utils
 bp = Blueprint('checkmymate', __name__)
 
 @bp.route("/", methods=['GET', 'POST'])
@@ -11,5 +12,7 @@ def index():
 @bp.route('/data/', methods=['POST'])
 def data():
     lichess_name = request.form.get("lichess_name")
-    games = [1,2,3]
-    return render_template('data.html', lichess_name=lichess_name, games=games)
+    opening_stats_struct = utils.get_lichess_user_opening_stats(lichess_name)
+    return render_template('data.html',
+                           lichess_name=lichess_name,
+                           opening_stats_struct=opening_stats_struct)

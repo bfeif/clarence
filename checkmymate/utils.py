@@ -10,7 +10,6 @@
 
 import pandas as pd
 import lichess.api
-import requests
 
 def process_game_dict(game_dict, username):
     """
@@ -69,9 +68,9 @@ def get_lichess_user_opening_stats(lichess_username):
         "opening": True,
         "moves": False,
         "sort": "dateDesc",
-        "max": 50}
-    games = [process_game_dict(g, user)
-            for g in lichess.api.user_games(user, **query)
+        "max": 10}
+    games = [process_game_dict(g, lichess_username)
+            for g in lichess.api.user_games(lichess_username, **query)
             if is_legal_game(g)]
 
     # test
@@ -83,12 +82,12 @@ def get_lichess_user_opening_stats(lichess_username):
                 ["points"]
                 .agg(["count", "mean"])
                 .sort_values("count", ascending=False)
+                .head(10)
+                .reset_index()
                 .rename({"opening_name_simple": "opening",
                          "count": "num_games",
                          "mean": "avg_points_per_game"},
                         axis=1)
-                .head(10)
-                .reset_index()
                 .to_dict("records"))
         for color in ["white", "black"]}
     return opening_stats
