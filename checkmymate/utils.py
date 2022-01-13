@@ -61,29 +61,41 @@ def is_legal_game(game_dict):
         return True
     return False
 
-if __name__=="__main__":
-
-    # load the games
-    user = 'normanrookwell'
+def get_lichess_user_opening_stats(lichess_username):
+    """
+    Wrapper function for getting all the formatted openings of a lichess user.
+    """
     query = {
         "opening": True,
         "moves": False,
         "sort": "dateDesc",
-        "max": 500}
+        "max": 50}
     games = [process_game_dict(g, user)
             for g in lichess.api.user_games(user, **query)
             if is_legal_game(g)]
 
     # test
     games = pd.DataFrame(games)
-    for color in ["white", "black"]:
-        display_games = \
-            (games
-            [games["color"]==color]
-            .groupby("opening_name_simple")
-            ["points"]
-            .agg(["count", "mean"])
-            .sort_values("count", ascending=False)
-            .rename({"opening_name_simple": "opening", "count": "num_games", "mean": "avg_points_per_game"})
-            .head(10))
-        print(display_games)
+    opening_stats = {
+        color: (games
+                [games["color"]==color]
+                .groupby("opening_name_simple")
+                ["points"]
+                .agg(["count", "mean"])
+                .sort_values("count", ascending=False)
+                .rename({"opening_name_simple": "opening",
+                         "count": "num_games",
+                         "mean": "avg_points_per_game"},
+                        axis=1)
+                .head(10)
+                .reset_index()
+                .to_dict("records"))
+        for color in ["white", "black"]}
+    return opening_stats
+
+# main
+if __name__=="__main__":
+
+    # load the games
+    user = 'normanrookwell'
+    print(get_lichess_user_opening_stats(user))
