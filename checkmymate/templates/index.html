@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
-<form method="post" action="/">
-    <p>lichess username <input type="text" name="username_entry" /></p>
-    <p><input type="submit" value="checkmymate" /></p>
+<!-- <h3>Check out how to best beat your mate!</h3> -->
+<form action="/data/">
+    <p>lichess username <input type="text" name="lichess_name" id="lichess_name"/></p>
+    <p><button>checkmymate</button></p>
 </form>
 {% endblock %}
