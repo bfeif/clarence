@@ -1,4 +1,27 @@
-{% for key,value in form_data.items() %}
-<h2> {{key}}</h2>
-<p> {{value}}</p>
+{% extends 'base.html' %}
+{% block content %}
+
+<h3> {{ lichess_name }}'s Most Common Openings </h3>
+{% for color in ["white", "black"] %}
+    <p>{{ color }}</p>
+
+    <table>
+        <tr>
+          <th>Opening</th>
+          <th>Number of Games</th>
+          <th>Avg Points per Game</th>
+        </tr>
+        {% for opening in opening_stats_struct[color] %}
+        <tr>
+          <td>{{opening["opening"]}}</td>
+          <td>{{opening["num_games"]}}</td>
+          <td>{{opening["avg_points_per_game"]}}</td>
+        {% endfor %}
+        </tr>
+    </table>
+    
+    </br>
+    </br>
 {% endfor %}
+
+{% endblock %}

@@ -1,23 +1,25 @@
 <title>{% block title %}{% endblock %} - CheckMyMate</title>
+
 <!-- Fonts -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css"
-      rel='stylesheet' type='text/css' />
+            rel='stylesheet' type='text/css' />
 <!-- Bootstrap CSS -->
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-      rel="stylesheet" />
+            rel="stylesheet" />
+
 
 <section class="content">
-  <div class="container">
-    <header>
-      {% block header %}{% endblock %}
-    </header>
-    {% for message in get_flashed_messages() %}
-      <div class="alert alert-danger">
-        <p class="lead">{{ message }}</p>
-      </div>
-    {% endfor %}
-    {% block content %}{% endblock %}
-  </div>
+    <br/>
+    <div class="heading">
+        <a href='/'><h1>checkmymate.co</h1></a>
+    </div>
+
+    <div class="container">
+        <header>
+            {% block header %}{% endblock %}
+        </header>
+        {% block content %}{% endblock %}
+    </div>
 </section>
 
 <!-- Bootstrap related JavaScript -->
