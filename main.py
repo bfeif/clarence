@@ -61,27 +61,29 @@ def is_legal_game(game_dict):
         return True
     return False
 
-# load the games
-user = 'normanrookwell'
-query = {
-    "opening": True,
-    "moves": False,
-    "sort": "dateDesc",
-    "max": 500}
-games = [process_game_dict(g, user)
-         for g in lichess.api.user_games(user, **query)
-         if is_legal_game(g)]
+if __name__=="__main__":
 
-# test
-games = pd.DataFrame(games)
-for color in ["white", "black"]:
-    display_games = \
-        (games
-         [games["color"]==color]
-         .groupby("opening_name_simple")
-         ["points"]
-         .agg(["count", "mean"])
-         .sort_values("count", ascending=False)
-         .rename({"opening_name_simple": "opening", "count": "num_games", "mean": "avg_points_per_game"})
-         .head(10))
-    print(display_games)
+    # load the games
+    user = 'normanrookwell'
+    query = {
+        "opening": True,
+        "moves": False,
+        "sort": "dateDesc",
+        "max": 500}
+    games = [process_game_dict(g, user)
+            for g in lichess.api.user_games(user, **query)
+            if is_legal_game(g)]
+
+    # test
+    games = pd.DataFrame(games)
+    for color in ["white", "black"]:
+        display_games = \
+            (games
+            [games["color"]==color]
+            .groupby("opening_name_simple")
+            ["points"]
+            .agg(["count", "mean"])
+            .sort_values("count", ascending=False)
+            .rename({"opening_name_simple": "opening", "count": "num_games", "mean": "avg_points_per_game"})
+            .head(10))
+        print(display_games)
