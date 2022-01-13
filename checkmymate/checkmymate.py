@@ -1,25 +1,15 @@
-from flask import Blueprint, Flask, render_template, request
+from flask import Blueprint, Flask, render_template, request, redirect, url_for
 bp = Blueprint('checkmymate', __name__)
 
 @bp.route("/", methods=['GET', 'POST'])
 def index():
-    # if request.method == 'POST':
-    #     if request.form.get('username_entry')=='VALUE1':
-    #         pass # do something
-    #     else:
-    #         pass # unknown
-    # elif request.method == 'GET':
-    #     return render_template('index.html')#, form=form)
-    
+    if request.method == 'POST':
+        lichess_name = request.form['lichess_name']
+        return redirect(url_for('data', lichess_name=lichess_name))
     return render_template("index.html")
 
-@bp.route('/data/', methods = ['POST', 'GET'])
+@bp.route('/data/', methods=['POST'])
 def data():
-    lichess_name = request.args.get('lichess_name')
-    return render_template('data.html', lichess_name=lichess_name)
-    # if request.method == 'GET':
-    #     return f"The URL /data is accessed directly. Try going to '/form' to submit form"
-    # if request.method == 'POST':
-    #     form_data = request.form
-    #     return render_template('data.html')
- 
+    lichess_name = request.form.get("lichess_name")
+    games = [1,2,3]
+    return render_template('data.html', lichess_name=lichess_name, games=games)

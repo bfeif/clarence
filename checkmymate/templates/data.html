@@ -1,4 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
-<h3>{{ lichess_name }}</h3>
+<h3> {{ lichess_name }}'s Most Common Openings </h3>
+{% for game in games %}
+    <p>{{ game }}</p>
+{% endfor %}
 {% endblock %}

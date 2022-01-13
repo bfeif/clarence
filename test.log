@@ -1,0 +1,108 @@
+ * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 410-262-832
+127.0.0.1 - - [13/Jan/2022 14:15:50] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [13/Jan/2022 14:15:50] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+127.0.0.1 - - [13/Jan/2022 14:15:52] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [13/Jan/2022 14:15:53] "[33mPOST /data/ HTTP/1.1[0m" 404 -
+ * Detected change in '/Users/benfeifke/code/clarence/checkmymate/checkmymate.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 410-262-832
+127.0.0.1 - - [13/Jan/2022 14:16:11] "[33mPOST /data/ HTTP/1.1[0m" 404 -
+127.0.0.1 - - [13/Jan/2022 14:16:12] "[33mPOST /data/ HTTP/1.1[0m" 404 -
+ * Detected change in '/Users/benfeifke/code/clarence/checkmymate/checkmymate.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 410-262-832
+127.0.0.1 - - [13/Jan/2022 14:16:20] "[33mPOST /data/ HTTP/1.1[0m" 404 -
+127.0.0.1 - - [13/Jan/2022 14:16:20] "[33mPOST /data/ HTTP/1.1[0m" 404 -
+127.0.0.1 - - [13/Jan/2022 14:16:28] "[33mPOST /data/ HTTP/1.1[0m" 404 -
+ * Detected change in '/Users/benfeifke/code/clarence/checkmymate/checkmymate.py', reloading
+ * Restarting with stat
+ * Debugger PIN: 410-262-832
+127.0.0.1 - - [13/Jan/2022 14:16:33] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [13/Jan/2022 14:16:35] "[33mPOST /data/ HTTP/1.1[0m" 404 -
+ * Detected change in '/Users/benfeifke/code/clarence/checkmymate/checkmymate.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 410-262-832
+127.0.0.1 - - [13/Jan/2022 14:17:52] "[33mPOST /data/ HTTP/1.1[0m" 404 -
+ * Detected change in '/Users/benfeifke/code/clarence/checkmymate/checkmymate.py', reloading
+ * Restarting with stat
+ * Debugger PIN: 410-262-832
+127.0.0.1 - - [13/Jan/2022 14:18:11] "[33mPOST /data/ HTTP/1.1[0m" 404 -
+127.0.0.1 - - [13/Jan/2022 14:18:14] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [13/Jan/2022 14:18:15] "[33mPOST /data/ HTTP/1.1[0m" 404 -
+ * Detected change in '/Users/benfeifke/code/clarence/checkmymate/checkmymate.py', reloading
+ * Restarting with stat
+ * Debugger PIN: 410-262-832
+127.0.0.1 - - [13/Jan/2022 14:18:35] "[31m[1mPOST /data/ HTTP/1.1[0m" 405 -
+127.0.0.1 - - [13/Jan/2022 14:18:41] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [13/Jan/2022 14:18:43] "[31m[1mPOST /data/ HTTP/1.1[0m" 405 -
+ * Detected change in '/Users/benfeifke/code/clarence/checkmymate/checkmymate.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 410-262-832
+127.0.0.1 - - [13/Jan/2022 14:18:58] "POST /data/ HTTP/1.1" 200 -
+127.0.0.1 - - [13/Jan/2022 14:18:59] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [13/Jan/2022 14:19:00] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [13/Jan/2022 14:19:02] "POST /data/ HTTP/1.1" 200 -
+ * Detected change in '/Users/benfeifke/code/clarence/checkmymate/checkmymate.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 410-262-832
+ * Detected change in '/Users/benfeifke/code/clarence/checkmymate/checkmymate.py', reloading
+ * Restarting with stat
+ * Debugger PIN: 410-262-832
+127.0.0.1 - - [13/Jan/2022 14:20:19] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [13/Jan/2022 14:20:20] "POST /data/ HTTP/1.1" 200 -
+ * Detected change in '/Users/benfeifke/code/clarence/checkmymate/checkmymate.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 410-262-832
+127.0.0.1 - - [13/Jan/2022 14:23:06] "POST /data/ HTTP/1.1" 200 -
+127.0.0.1 - - [13/Jan/2022 14:23:11] "[33mGET /subscribe/ HTTP/1.1[0m" 404 -
+127.0.0.1 - - [13/Jan/2022 14:23:56] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [13/Jan/2022 14:24:02] "POST /data/ HTTP/1.1" 200 -
+ * Detected change in '/Users/benfeifke/code/clarence/checkmymate/checkmymate.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 410-262-832
+127.0.0.1 - - [13/Jan/2022 14:41:28] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [13/Jan/2022 14:42:11] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [13/Jan/2022 14:43:37] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [13/Jan/2022 14:43:38] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+127.0.0.1 - - [13/Jan/2022 14:43:39] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [13/Jan/2022 14:43:39] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+127.0.0.1 - - [13/Jan/2022 14:43:40] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [13/Jan/2022 14:43:40] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+127.0.0.1 - - [13/Jan/2022 14:44:53] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [13/Jan/2022 14:44:53] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+127.0.0.1 - - [13/Jan/2022 14:45:06] "POST /data/ HTTP/1.1" 200 -
+127.0.0.1 - - [13/Jan/2022 14:45:39] "GET / HTTP/1.1" 200 -
+ * Detected change in '/Users/benfeifke/code/clarence/checkmymate/checkmymate.py', reloading
+ * Restarting with stat
+127.0.0.1 - - [13/Jan/2022 14:47:31] "[31m[1mGET /data/ HTTP/1.1[0m" 405 -
+127.0.0.1 - - [13/Jan/2022 14:47:36] "POST /data/ HTTP/1.1" 200 -
+ * Detected change in '/Users/benfeifke/code/clarence/checkmymate/checkmymate.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 410-262-832
+127.0.0.1 - - [13/Jan/2022 14:49:30] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [13/Jan/2022 14:49:32] "POST /data/ HTTP/1.1" 200 -
+ * Detected change in '/Users/benfeifke/code/clarence/checkmymate/checkmymate.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 410-262-832
+127.0.0.1 - - [13/Jan/2022 14:49:45] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [13/Jan/2022 14:49:48] "POST /data/ HTTP/1.1" 200 -
+127.0.0.1 - - [13/Jan/2022 14:51:16] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [13/Jan/2022 14:51:17] "POST /data/ HTTP/1.1" 200 -
+ * Detected change in '/Users/benfeifke/code/clarence/checkmymate/checkmymate.py', reloading
+ * Restarting with stat
+ * Restarting with stat
+ * Restarting with stat
+ * Restarting with stat
+ * Restarting with stat
