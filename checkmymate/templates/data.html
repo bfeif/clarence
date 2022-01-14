@@ -1,26 +1,29 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h3> {{ lichess_name }}'s Most Common Openings </h3>
+<h3 class="jumbotron-heading text-muted text-center"> {{ lichess_name }}'s most common openings </h3>
+</br>
 {% for color in ["white", "black"] %}
-    <p>{{ color }}</p>
+    <div class="text-center"><h5>{{ {"white": "White", "black": "Black"}[color] }}</h5></div>
 
-    <table>
-        <tr>
-          <th>Opening</th>
-          <th>Number of Games</th>
-          <th>Avg Points per Game</th>
-        </tr>
-        {% for opening in opening_stats_struct[color] %}
-        <tr>
-          <td>{{opening["opening"]}}</td>
-          <td>{{opening["num_games"]}}</td>
-          <td>{{opening["avg_points_per_game"]}}</td>
-        {% endfor %}
-        </tr>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Opening</th>
+                <th>Number of Games</th>
+                <th>Avg Points per Game</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for opening in opening_stats_struct[color] %}
+            <tr>
+                <td>{{opening["opening"]}}</td>
+                <td>{{opening["num_games"]}}</td>
+                <td>{{'%0.4f'|format(opening["avg_points_per_game"]|float)}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
-    
-    </br>
     </br>
 {% endfor %}
 
