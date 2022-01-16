@@ -1,1 +1,1 @@
-web: gunicorn checkmymate:'create_app()'
+web: gunicorn checkmymate:app
