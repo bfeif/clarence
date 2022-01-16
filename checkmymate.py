@@ -17,14 +17,15 @@ def home():
         lichess_name = lichess_name if lichess_name else " "
         num_games = request.form["num_games"]
 
-        # return the correct template, depending on the error
+        # return the correct template, depending on user-input.
         if num_games=="":
             return render_template("index.html", error_num_games="_")
-        if int(num_games)<=0:
+        elif int(num_games)<=0:
             return render_template("index.html", error_num_games="_")
-        if not utils.is_user(lichess_name):
+        elif not utils.is_user(lichess_name):
             return render_template("index.html", error_name=lichess_name)
-        return redirect(url_for("user", lichess_name=lichess_name, num_games=num_games))
+        else:
+            return redirect(url_for("user", lichess_name=lichess_name, num_games=num_games))
 
     # normal index
     else:
