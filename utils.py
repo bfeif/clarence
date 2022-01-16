@@ -15,7 +15,6 @@ def process_game_dict(game_dict, username):
     """
     Processes a single game dictionary, as it comes from the result of `lichess.api.user_games()`.
     """
-    # print(game_dict)
 
     # get opening info
     opening_name = game_dict["opening"]["name"]
@@ -63,8 +62,14 @@ def is_legal_game(game_dict):
 def get_lichess_user_opening_stats(lichess_username, num_games):
     """
     Wrapper function for getting all the formatted openings of a lichess user.
+
+    Note on the maximum speed of this function
+    (from https://lichess.org/api#operation/apiGamesUser):
+        "The game stream is throttled, depending on who is making the request:
+            - Anonymous request: 20 games per second
+            - OAuth2 authenticated request: 30 games per second
+            - Authenticated, downloading your own games: 60 games per second"
     """
-    print(num_games)
     query = {
         "opening": True,
         "moves": False,
