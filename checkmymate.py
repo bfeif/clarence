@@ -9,16 +9,17 @@ logger.setLevel(logging.INFO)
 @app.route("/", methods=["POST", "GET"])
 def home():
     if request.method == "POST":
-        user = request.form["nm"]
-        if user=="ben":
-            return render_template("index.html", err="sorry ben")
-        return redirect(url_for("user", usr=user))
+        lichess_name = request.form["lichess_name"]
+        num_games = request.form["num_games"]
+        if not utils.is_user(lichess_name):
+            return render_template("index.html", error_name=lichess_name)
+        return redirect(url_for("user", lichess_name=lichess_name, num_games=num_games))
     else:
         return render_template("index.html")
 
-@app.route("/<usr>")
-def user(usr):
-    return f"<h1>{usr}</h1>"
+@app.route("/<lichess_name>/<num_games>")
+def user(lichess_name, num_games):
+    return f"<h1>{lichess_name}, {num_games}</h1>"
 
 if __name__ == "__main__":
     app.run(debug=True)
