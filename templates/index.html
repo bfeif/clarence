@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 <p class="lead text-muted text-center">Analyze your friend's lichess games to see how to beat them!</p>
-<form action="/data/" method="POST">
+<form method="POST">
     <div class="form-group">
         Lichess Username: <input type="text" class="form-control" name="lichess_name">
         Number of Games: <input type="number" class="form-control" name="num_games">
@@ -9,9 +9,14 @@
     <div class="text-center">
         <button type="submit" class="btn btn-secondary">checkmymate</button>
     </div>
-    {% if error_message %}
-    <div>{{error_message}}</div>
-    {% endif %}
-    
 </form>
+
+{% if error_name %}
+<div class="alert alert-warning"><strong>Uh oh! </strong>Looks like "{{error_name}}" isn't a lichess user!</div>
+{% endif %}
+
+{% if error_num_games %}
+<div class="alert alert-warning"><strong>Uh oh! </strong>Number of Games must be greater than 0!</div>
+{% endif %}
+
 {% endblock %}
