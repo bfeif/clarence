@@ -10,6 +10,7 @@ logger.setLevel(logging.INFO)
 def home():
     if request.method == "POST":
         lichess_name = request.form["lichess_name"]
+        lichess_name = lichess_name if lichess_name else " "
         num_games = request.form["num_games"]
         if not utils.is_user(lichess_name):
             return render_template("index.html", error_name=lichess_name)
@@ -19,7 +20,10 @@ def home():
 
 @app.route("/<lichess_name>/<num_games>")
 def user(lichess_name, num_games):
-    return f"<h1>{lichess_name}, {num_games}</h1>"
+    opening_stats_struct = utils.get_lichess_user_opening_stats(lichess_name, num_games)
+    return render_template('user.html',
+                           lichess_name=lichess_name,
+                           opening_stats_struct=opening_stats_struct)
 
 if __name__ == "__main__":
     app.run(debug=True)
