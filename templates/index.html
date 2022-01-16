@@ -9,13 +9,14 @@
     <div class="text-center">
         <button type="submit" class="btn btn-secondary">checkmymate</button>
     </div>
-    {% if error_message %}
-    <div>{{error_message}}</div>
-    {% endif %}
 </form>
 
 {% if error_name %}
 <div class="alert alert-warning"><strong>Uh oh! </strong>Looks like "{{error_name}}" isn't a lichess user!</div>
+{% endif %}
+
+{% if error_num_games %}
+<div class="alert alert-warning"><strong>Uh oh! </strong>Number of Games must be greater than 0!</div>
 {% endif %}
 
 {% endblock %}
