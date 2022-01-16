@@ -23,16 +23,12 @@ def process_game_dict(game_dict, username):
 
     # get color
     if 'aiLevel' in game_dict["players"]["white"].keys():
-        # print(1)
         color = "black"
     elif 'aiLevel' in game_dict["players"]["black"].keys():
-        # print(2)
         color = "white"
     elif game_dict["players"]["white"]["user"]["name"]==username:
-        # print(3)
         color = "white"
     else:
-        # print(4)
         color = "black"
 
     # get points
@@ -44,7 +40,6 @@ def process_game_dict(game_dict, username):
         points = 0
 
     # return
-    # print(color)
     return {"opening_name": opening_name,
             "opening_name_simple": opening_name_simple,
             "opening_code": opening_code, 
