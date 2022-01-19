@@ -5,6 +5,7 @@ import logging
 app = Flask(__name__)
 logger = app.logger
 logger.setLevel(logging.INFO)
+MAX_GAMES = 500
 
 @app.route("/", methods=["POST", "GET"])
 def home():
@@ -33,6 +34,8 @@ def home():
 
 @app.route("/<lichess_name>/<num_games>")
 def user(lichess_name, num_games):
+    if int(num_games) > MAX_GAMES:
+        redirect(url_for("user", lichess_name=lichess_name, num_games=MAX_GAMES))
     opening_stats_struct = utils.get_lichess_user_opening_stats(lichess_name, num_games)
     return render_template('user.html',
                            lichess_name=lichess_name,
