@@ -11,7 +11,7 @@
 import pandas as pd
 import lichess.api
 
-def process_game_dict(game_dict, username):
+def process_lichess_game_dict(game_dict, username):
     """
     Processes a single game dictionary, as it comes from the result of `lichess.api.user_games()`.
     """
@@ -46,7 +46,7 @@ def process_game_dict(game_dict, username):
             "color": color,
             "points": points}
 
-def is_legal_game(game_dict):
+def is_legal_lichess_game(game_dict):
     """
     Not all games have all requisite data. If they don't, return False; else, return True.
     """
@@ -70,9 +70,9 @@ def get_lichess_user_opening_stats(lichess_username, num_games):
         "moves": False,
         "sort": "dateDesc",
         "max": num_games}
-    games = [process_game_dict(g, lichess_username)
+    games = [process_lichess_game_dict(g, lichess_username)
             for g in lichess.api.user_games(lichess_username, **query)
-            if is_legal_game(g)]
+            if is_legal_lichess_game(g)]
 
     # test
     games = pd.DataFrame(games)
@@ -93,9 +93,9 @@ def get_lichess_user_opening_stats(lichess_username, num_games):
         for color in ["white", "black"]}
     return opening_stats
 
-def is_user(lichess_username):
+def is_lichess_user(lichess_username):
     """
-    Wrapper function to check if a user exists.
+    Check if a user exists on lichess.
     """
     try:
         user = lichess.api.user(lichess_username)

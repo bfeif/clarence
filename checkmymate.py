@@ -23,7 +23,7 @@ def home():
             return render_template("index.html", error_num_games="_")
         elif int(num_games)<=0:
             return render_template("index.html", error_num_games="_")
-        elif not utils.is_user(lichess_name):
+        elif not utils.is_lichess_user(lichess_name):
             return render_template("index.html", error_name=lichess_name)
         else:
             return redirect(url_for("user", lichess_name=lichess_name, num_games=num_games))
