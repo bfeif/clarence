@@ -1,1 +1,2 @@
-# check-my-mate
+# Clarence
+Herein lies the code that powers [checkmymate.co](http://checkmymate.co/).

@@ -17,6 +17,7 @@ def home():
         lichess_name = request.form["lichess_name"]
         lichess_name = lichess_name if lichess_name else " "
         num_games = request.form["num_games"]
+        num_lookback_days = request.form["num_lookback_days"]
 
         # return the correct template, depending on user-input.
         if num_games=="":
@@ -26,7 +27,7 @@ def home():
         elif not utils.is_lichess_user(lichess_name):
             return render_template("index.html", error_name=lichess_name)
         else:
-            return redirect(url_for("user", lichess_name=lichess_name, num_games=num_games))
+            return redirect(url_for("user", lichess_name=lichess_name, num_games=num_games, num_lookback_days=num_lookback_days))
 
     # normal index
     else:
@@ -36,7 +37,7 @@ def home():
 def user(lichess_name, num_games):
     if int(num_games) > MAX_GAMES:
         redirect(url_for("user", lichess_name=lichess_name, num_games=MAX_GAMES))
-    opening_stats_struct = utils.get_user_opening_stats(lichess_name, num_games)
+    opening_stats_struct = utils.get_user_opening_stats(lichess_name, num_games, platform="both")
     return render_template('user.html',
                            lichess_name=lichess_name,
                            opening_stats_struct=opening_stats_struct)

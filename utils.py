@@ -9,7 +9,16 @@
 # https://lichess.org/api#operation/apiUserCurrentGame
 
 import pandas as pd
+import re
 import lichess.api
+import logging
+import json
+import datetime as dt
+import requests
+from flask import Flask
+app = Flask(__name__)
+logger = app.logger
+logger.setLevel(logging.INFO)
 
 def process_lichess_game_dict(game_dict, username):
     """
@@ -46,6 +55,37 @@ def process_lichess_game_dict(game_dict, username):
             "color": color,
             "points": points}
 
+def process_chesscom_game_dict(game_dict, username):
+
+    # take the game pgn
+    pgn = game_dict['pgn']
+
+    # get opening info
+    opening_name_pattern = r'\[ECOUrl "https:\/\/www\.chess\.com\/openings\/([\d\.a-zA-Z-]+)"]'
+    opening_code_pattern = r'\[ECO "([A-Z]{1}\d{2})"]'
+    opening_name = re.findall(opening_name_pattern, pgn)[0].replace('-', ' ')
+    opening_name_simple = " ".join(opening_name.split(' ', 2)[:2])
+    opening_code = re.findall(opening_code_pattern, pgn)[0]
+
+    # get color info
+    if game_dict["white"]["username"]==username:
+        color = "white"
+    elif game_dict["black"]["username"]==username:
+        color = "black"
+    else:
+        logger.error('error in getting game color')
+
+    # get points info
+    # TODO figure out if it's a draw or not!
+    points = 1 if game_dict[color]["result"]=="win" else 0    
+
+    # return
+    return {"opening_name": opening_name,
+            "opening_name_simple": opening_name_simple,
+            "opening_code": opening_code,
+            "color": color,
+            "points": points}
+
 def is_legal_lichess_game(game_dict):
     """
     Not all games have all requisite data. If they don't, return False; else, return True.
@@ -73,18 +113,26 @@ def get_lichess_user_games_df(lichess_username, num_games):
     games = [process_lichess_game_dict(g, lichess_username)
             for g in lichess.api.user_games(lichess_username, **query)
             if is_legal_lichess_game(g)]
-    return pd.DataFrame(games)
+    df = pd.DataFrame(games)
+    df["website"] = "lichess"
+    return df
 
-def get_user_opening_stats(lichess_username, num_games):
+def get_user_opening_stats(chess_username: str, num_games: int, num_lookback_days=100, platform="lichess"):
     """
     Get the opening statistics of a given user.
 
     Returns a 2-tuple (pd.DataFrame of white opening stats, pd.DataFrame of black opening stats)
     """
-    lichess_games_df = get_lichess_user_games_df(lichess_username, num_games)
+    if platform=="lichess":
+        games_df = get_lichess_user_games_df(chess_username, num_games)
+    if platform=="chesscom":
+        games_df = get_chesscom_user_games_df(chess_username, num_lookback_days)
+    if platform=="both":
+        games_df = pd.concat([get_chesscom_user_games_df(chess_username, num_lookback_days),
+                              get_lichess_user_games_df(chess_username, num_games)])
     opening_stats = {
-        color: (lichess_games_df
-                [lichess_games_df["color"]==color]
+        color: (games_df
+                [games_df["color"]==color]
                 .groupby("opening_name_simple")
                 ["points"]
                 .agg(["count", "mean"])
@@ -109,16 +157,49 @@ def is_lichess_user(lichess_username):
     except lichess.api.ApiHttpError:
         return False
 
-def get_chesscom_user_games_df(chesscom_username, start_date):
+def get_chesscom_user_month_games(chesscom_username, year, month):
+    """
+    Get the games for a chesscom user for one month:
+
+    https://api.chess.com/pub/player/normanrookwell/games/2021/10
+    """
+    url = f"https://api.chess.com/pub/player/{chesscom_username}/games/{year}/{month:02d}"
+    return json.loads(requests.get(url).content)['games']
+
+def get_chesscom_user_games_df(chesscom_username, num_lookback_days):
     """
     Get all the formatted chess.com games of a chess.com user.
-    """
-    pass
 
+    Notes on the chess.com public API:
+        To get past games from the chess.com api, there is a some month-wise archived folder endpoint.
+        Then, we'll have to hit a different endpoint to get the games of each month, since not every month
+        necessarily has games:
+        https://api.chess.com/pub/player/normanrookwell/games/archives
+        https://api.chess.com/pub/player/normanrookwell/games/2021/10
+    """
+
+
+    # get the query month range.
+    # TODO: fix the hokey-ness forced by pd.date_range function
+    dates = pd.date_range(dt.date.today() - dt.timedelta(days=num_lookback_days),
+                          dt.date.today() + dt.timedelta(days=30),
+                          freq="M")
+    
+    # get all the games from all the months
+    games = [process_chesscom_game_dict(game, chesscom_username)
+             for date in dates
+             for game in get_chesscom_user_month_games(chesscom_username, date.year, date.month)]
+    
+    # return
+    df = pd.DataFrame(games)
+    df["website"] = "chessdotcom"
+    return df
 
 # main
 if __name__=="__main__":
 
     # load the games
-    user = 'normanrookwell'
-    print(get_lichess_user_opening_stats(user, 10))
+    # user = 'normanrookwell'
+    # print(get_user_opening_stats(user, 10))
+    print(get_chesscom_user_games_df("KorayKayir", 70).head(10))
+    print(get_user_opening_stats(chess_username="madmaxmatze", num_games=100, num_lookback_days=200, platform="both"))
