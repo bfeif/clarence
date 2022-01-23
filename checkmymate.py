@@ -36,7 +36,7 @@ def home():
 def user(lichess_name, num_games):
     if int(num_games) > MAX_GAMES:
         redirect(url_for("user", lichess_name=lichess_name, num_games=MAX_GAMES))
-    opening_stats_struct = utils.get_lichess_user_opening_stats(lichess_name, num_games)
+    opening_stats_struct = utils.get_user_opening_stats(lichess_name, num_games)
     return render_template('user.html',
                            lichess_name=lichess_name,
                            opening_stats_struct=opening_stats_struct)

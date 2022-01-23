@@ -54,9 +54,9 @@ def is_legal_lichess_game(game_dict):
         return True
     return False
 
-def get_lichess_user_opening_stats(lichess_username, num_games):
+def get_lichess_user_games_df(lichess_username, num_games):
     """
-    Wrapper function for getting all the formatted openings of a lichess user.
+    Get all the formatted lichess gamese of a lichess user.
 
     Note on the maximum speed of this function
     (from https://lichess.org/api#operation/apiGamesUser):
@@ -73,12 +73,18 @@ def get_lichess_user_opening_stats(lichess_username, num_games):
     games = [process_lichess_game_dict(g, lichess_username)
             for g in lichess.api.user_games(lichess_username, **query)
             if is_legal_lichess_game(g)]
+    return pd.DataFrame(games)
 
-    # test
-    games = pd.DataFrame(games)
+def get_user_opening_stats(lichess_username, num_games):
+    """
+    Get the opening statistics of a given user.
+
+    Returns a 2-tuple (pd.DataFrame of white opening stats, pd.DataFrame of black opening stats)
+    """
+    lichess_games_df = get_lichess_user_games_df(lichess_username, num_games)
     opening_stats = {
-        color: (games
-                [games["color"]==color]
+        color: (lichess_games_df
+                [lichess_games_df["color"]==color]
                 .groupby("opening_name_simple")
                 ["points"]
                 .agg(["count", "mean"])
@@ -102,6 +108,13 @@ def is_lichess_user(lichess_username):
         return True
     except lichess.api.ApiHttpError:
         return False
+
+def get_chesscom_user_games_df(chesscom_username, start_date):
+    """
+    Get all the formatted chess.com games of a chess.com user.
+    """
+    pass
+
 
 # main
 if __name__=="__main__":
