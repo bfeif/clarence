@@ -86,6 +86,15 @@ def process_chesscom_game_dict(game_dict, username):
             "color": color,
             "points": points}
 
+def is_legal_chesscom_game(game_dict):
+    """
+    Not all games have all requisite data. If they don't, return False; else, return True.
+    """
+    opening_name_pattern = r'\[ECOUrl "https:\/\/www\.chess\.com\/openings\/([\d\.a-zA-Z-]+)"]'
+    if len(re.findall(opening_name_pattern, game_dict['pgn']))==1:
+        return True
+    return False
+
 def is_legal_lichess_game(game_dict):
     """
     Not all games have all requisite data. If they don't, return False; else, return True.
@@ -188,7 +197,8 @@ def get_chesscom_user_games_df(chesscom_username, num_lookback_days):
     # get all the games from all the months
     games = [process_chesscom_game_dict(game, chesscom_username)
              for date in dates
-             for game in get_chesscom_user_month_games(chesscom_username, date.year, date.month)]
+             for game in get_chesscom_user_month_games(chesscom_username, date.year, date.month)
+             if is_legal_chesscom_game(game)]
     
     # return
     df = pd.DataFrame(games)
@@ -201,5 +211,5 @@ if __name__=="__main__":
     # load the games
     # user = 'normanrookwell'
     # print(get_user_opening_stats(user, 10))
-    print(get_chesscom_user_games_df("KorayKayir", 70).head(10))
+    # print(get_chesscom_user_games_df("KorayKayir", 70).head(10))
     print(get_user_opening_stats(chess_username="madmaxmatze", num_games=100, num_lookback_days=200, platform="both"))
