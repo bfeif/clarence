@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h3 class="jumbotron-heading text-muted text-center"> {{ lichess_name }}'s most common openings </h3>
+<h3 class="jumbotron-heading text-muted text-center"> {{ chess_username }}'s most common openings </h3>
 </br>
 {% for color in ["white", "black"] %}
     <div class="text-center"><h5>{{ {"white": "White", "black": "Black"}[color] }}</h5></div>

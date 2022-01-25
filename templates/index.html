@@ -4,8 +4,7 @@
 <form method="POST">
     <div class="form-group">
         Username: <input type="text" class="form-control" name="chess_username">
-        Number of Games: <input type="number" class="form-control" name="num_games" min=1 max=500 value=100>
-        How many Days Back do Look: <input type="number" class="form-control" name="num_lookback_days" min=0 max=500>
+        Analyze Games from the Past ___ Days: <input type="number" class="form-control" name="num_lookback_days" min=1 max=365 value=50>
         Chess Platform:<br>
         <input type="radio" id="lichess" value="lichess" name="platform" checked="checked">
         <label class="form-check-label" for="lichess">Lichess</label><br>
@@ -20,11 +19,7 @@
 </form>
 
 {% if error_name %}
-<div class="alert alert-warning"><strong>Uh oh! </strong>Looks like "{{error_name}}" isn't a lichess user!</div>
-{% endif %}
-
-{% if error_num_games %}
-<div class="alert alert-warning"><strong>Uh oh! </strong>Number of Games must be greater than 0!</div>
+<div class="alert alert-warning"><strong>Uh oh! </strong>Looks like "{{error_name}}" isn't a {{error_platform}} user!</div>
 {% endif %}
 
 {% endblock %}

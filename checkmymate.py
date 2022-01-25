@@ -16,22 +16,20 @@ def home():
         # get field values from the form
         chess_username = request.form["chess_username"]
         chess_username = chess_username if chess_username else " "
-        num_games = request.form["num_games"]
         num_lookback_days = request.form["num_lookback_days"]
         platform = request.form["platform"]
         logger.info(f"platform: {platform}")
 
         # return the correct template, depending on user-input.
-        if num_games=="":
-            return render_template("index.html", error_num_games="_")
-        elif int(num_games)<=0:
-            return render_template("index.html", error_num_games="_")
-        elif not utils.is_lichess_user(chess_username):
-            return render_template("index.html", error_name=chess_username)
+        if platform=="lichess" and utils.is_lichess_user(chess_username)==False:
+            return render_template("index.html", error_name=chess_username, error_platform=platform)
+        elif platform=="chesscom" and utils.is_chesscom_user(chess_username)==False:
+            return render_template("index.html", error_name=chess_username, error_platform=platform)
+        elif platform=="both" and (utils.is_lichess_user(chess_username)==False or utils.is_chesscom_user(chess_username)==False):
+            return render_template("index.html", error_name=chess_username, error_platform="lichess or chess.com")
         else:
             return redirect(url_for("user",
                                     chess_username=chess_username,
-                                    num_games=num_games,
                                     num_lookback_days=num_lookback_days,
                                     platform=platform))
 
@@ -39,20 +37,13 @@ def home():
     else:
         return render_template("index.html")
 
-@app.route("/<chess_username>_<num_games>_<num_lookback_days>_<platform>")
-def user(chess_username, num_games, num_lookback_days, platform):
-    if int(num_games) > MAX_GAMES:
-        redirect(url_for("user",
-                         chess_username=chess_username,
-                         num_games=MAX_GAMES,
-                         num_lookback_days=num_lookback_days,
-                         platform=platform))
+@app.route("/<chess_username>/since-<num_lookback_days>/platform-<platform>")
+def user(chess_username, num_lookback_days, platform):
     opening_stats_struct = utils.get_user_opening_stats(chess_username=chess_username,
-                                                        num_games=int(num_games), 
                                                         num_lookback_days=int(num_lookback_days),
                                                         platform=platform)
     return render_template('user.html',
-                           lichess_name=chess_username,
+                           chess_username=chess_username,
                            opening_stats_struct=opening_stats_struct)
 
 if __name__ == "__main__":

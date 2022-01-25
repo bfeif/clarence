@@ -16,9 +16,12 @@ import json
 import datetime as dt
 import requests
 from flask import Flask
+
 app = Flask(__name__)
 logger = app.logger
 logger.setLevel(logging.INFO)
+MAX_LICHESS_GAMES = 500
+SECONDS_PER_DAY = 24 * 60 * 60
 
 def process_lichess_game_dict(game_dict, username):
     """
@@ -103,59 +106,6 @@ def is_legal_lichess_game(game_dict):
         return True
     return False
 
-def get_lichess_user_games_df(lichess_username, num_games):
-    """
-    Get all the formatted lichess gamese of a lichess user.
-
-    Note on the maximum speed of this function
-    (from https://lichess.org/api#operation/apiGamesUser):
-        "The game stream is throttled, depending on who is making the request:
-            - Anonymous request: 20 games per second
-            - OAuth2 authenticated request: 30 games per second
-            - Authenticated, downloading your own games: 60 games per second"
-    """
-    query = {
-        "opening": True,
-        "moves": False,
-        "sort": "dateDesc",
-        "max": num_games}
-    games = [process_lichess_game_dict(g, lichess_username)
-            for g in lichess.api.user_games(lichess_username, **query)
-            if is_legal_lichess_game(g)]
-    df = pd.DataFrame(games)
-    df["website"] = "lichess"
-    return df
-
-def get_user_opening_stats(chess_username: str, num_games: int, num_lookback_days=100, platform="lichess"):
-    """
-    Get the opening statistics of a given user.
-
-    Returns a 2-tuple (pd.DataFrame of white opening stats, pd.DataFrame of black opening stats)
-    """
-    if platform=="lichess":
-        games_df = get_lichess_user_games_df(chess_username, num_games)
-    if platform=="chesscom":
-        games_df = get_chesscom_user_games_df(chess_username, num_lookback_days)
-    if platform=="both":
-        games_df = pd.concat([get_chesscom_user_games_df(chess_username, num_lookback_days),
-                              get_lichess_user_games_df(chess_username, num_games)])
-    opening_stats = {
-        color: (games_df
-                [games_df["color"]==color]
-                .groupby("opening_name_simple")
-                ["points"]
-                .agg(["count", "mean"])
-                .sort_values("count", ascending=False)
-                .head(5)
-                .reset_index()
-                .rename({"opening_name_simple": "opening",
-                         "count": "num_games",
-                         "mean": "avg_points_per_game"},
-                        axis=1)
-                .to_dict("records"))
-        for color in ["white", "black"]}
-    return opening_stats
-
 def is_lichess_user(lichess_username):
     """
     Check if a user exists on lichess.
@@ -166,14 +116,38 @@ def is_lichess_user(lichess_username):
     except lichess.api.ApiHttpError:
         return False
 
-def get_chesscom_user_month_games(chesscom_username, year, month):
-    """
-    Get the games for a chesscom user for one month:
+def is_chesscom_user(chesscom_username):
+    player_dict = json.loads(requests.get(f"https://api.chess.com/pub/player/{chesscom_username}").content)
+    if "player_id" in player_dict:
+        return True
+    return False
 
-    https://api.chess.com/pub/player/normanrookwell/games/2021/10
+def get_lichess_user_games_df(lichess_username, num_lookback_days):
     """
-    url = f"https://api.chess.com/pub/player/{chesscom_username}/games/{year}/{month:02d}"
-    return json.loads(requests.get(url).content)['games']
+    Get all the formatted lichess gamese of a lichess user.
+
+    Note on the maximum speed of this function
+    (from https://lichess.org/api#operation/apiGamesUser):
+        "The game stream is throttled, depending on who is making the request:
+            - Anonymous request: 20 games per second
+            - OAuth2 authenticated request: 30 games per second
+            - Authenticated, downloading your own games: 60 games per second"
+    """
+    since = 1000 * (int(dt.datetime.utcnow().timestamp()) - num_lookback_days * SECONDS_PER_DAY)
+    logger.info(num_lookback_days)
+    logger.info(since)
+    query = {
+        "opening": True,
+        "moves": False,
+        "sort": "dateDesc",
+        "since": since,
+        "max": MAX_LICHESS_GAMES}
+    games = [process_lichess_game_dict(g, lichess_username)
+            for g in lichess.api.user_games(lichess_username, **query)
+            if is_legal_lichess_game(g)]
+    df = pd.DataFrame(games)
+    df["website"] = "lichess"
+    return df
 
 def get_chesscom_user_games_df(chesscom_username, num_lookback_days):
     """
@@ -204,6 +178,45 @@ def get_chesscom_user_games_df(chesscom_username, num_lookback_days):
     df = pd.DataFrame(games)
     df["website"] = "chessdotcom"
     return df
+
+def get_user_opening_stats(chess_username: str, num_lookback_days=100, platform="lichess"):
+    """
+    Get the opening statistics of a given user.
+
+    Returns a 2-tuple (pd.DataFrame of white opening stats, pd.DataFrame of black opening stats)
+    """
+    if platform=="lichess":
+        games_df = get_lichess_user_games_df(chess_username, num_lookback_days)
+    if platform=="chesscom":
+        games_df = get_chesscom_user_games_df(chess_username, num_lookback_days)
+    if platform=="both":
+        games_df = pd.concat([get_chesscom_user_games_df(chess_username, num_lookback_days),
+                              get_lichess_user_games_df(chess_username, num_lookback_days)])
+    opening_stats = {
+        color: (games_df
+                [games_df["color"]==color]
+                .groupby("opening_name_simple")
+                ["points"]
+                .agg(["count", "mean"])
+                .sort_values("count", ascending=False)
+                .head(5)
+                .reset_index()
+                .rename({"opening_name_simple": "opening",
+                         "count": "num_games",
+                         "mean": "avg_points_per_game"},
+                        axis=1)
+                .to_dict("records"))
+        for color in ["white", "black"]}
+    return opening_stats
+
+def get_chesscom_user_month_games(chesscom_username, year, month):
+    """
+    Get the games for a chesscom user for one month:
+
+    https://api.chess.com/pub/player/normanrookwell/games/2021/10
+    """
+    url = f"https://api.chess.com/pub/player/{chesscom_username}/games/{year}/{month:02d}"
+    return json.loads(requests.get(url).content)['games']
 
 # main
 if __name__=="__main__":
