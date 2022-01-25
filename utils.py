@@ -208,8 +208,12 @@ def get_chesscom_user_games_df(chesscom_username, num_lookback_days):
 # main
 if __name__=="__main__":
 
-    # load the games
-    # user = 'normanrookwell'
-    # print(get_user_opening_stats(user, 10))
-    # print(get_chesscom_user_games_df("KorayKayir", 70).head(10))
-    print(get_user_opening_stats(chess_username="madmaxmatze", num_games=100, num_lookback_days=200, platform="both"))
+    # test name
+    test_names = [
+        "nikolaserdmann",
+        "normanrookwell",
+        "KorayKayir",
+        "madmaxmatze"
+    ]
+    for name in test_names:
+        print(get_user_opening_stats(chess_username="nikolaserdmann", num_games=100, num_lookback_days=200, platform="both"))
