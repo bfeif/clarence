@@ -141,8 +141,6 @@ def get_lichess_user_games_df(lichess_username, num_lookback_days):
             - Authenticated, downloading your own games: 60 games per second"
     """
     since = 1000 * (int(dt.datetime.utcnow().timestamp()) - num_lookback_days * SECONDS_PER_DAY)
-    logger.info(num_lookback_days)
-    logger.info(since)
     query = {
         "opening": True,
         "moves": False,
@@ -243,6 +241,5 @@ if __name__ == "__main__":
         "madmaxmatze",
         "Rooklord69"
     ]
-    # for name in test_names:
-    #     print(get_user_opening_stats(chess_username=name, num_lookback_days=100, platform="both"))
-    print(get_user_opening_stats(chess_username="Rooklord69", num_lookback_days=100, platform="chescom"))
+    for name in test_names:
+        print(get_user_opening_stats(chess_username=name, num_lookback_days=100, platform="both"))
