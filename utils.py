@@ -22,6 +22,8 @@ logger = app.logger
 logger.setLevel(logging.INFO)
 MAX_LICHESS_GAMES = 500
 SECONDS_PER_DAY = 24 * 60 * 60
+GAMES_DF_COLUMNS = ['opening_name', 'opening_name_simple', 'opening_code', 'color', 'points', 'website']
+
 
 def process_lichess_game_dict(game_dict, username):
     """
@@ -38,7 +40,7 @@ def process_lichess_game_dict(game_dict, username):
         color = "black"
     elif 'aiLevel' in game_dict["players"]["black"].keys():
         color = "white"
-    elif game_dict["players"]["white"]["user"]["name"]==username:
+    elif game_dict["players"]["white"]["user"]["name"] == username:
         color = "white"
     else:
         color = "black"
@@ -46,7 +48,7 @@ def process_lichess_game_dict(game_dict, username):
     # get points
     if "winner" not in game_dict:
         points = .5
-    elif game_dict["winner"]==color:
+    elif game_dict["winner"] == color:
         points = 1
     else:
         points = 0
@@ -54,12 +56,12 @@ def process_lichess_game_dict(game_dict, username):
     # return
     return {"opening_name": opening_name,
             "opening_name_simple": opening_name_simple,
-            "opening_code": opening_code, 
+            "opening_code": opening_code,
             "color": color,
             "points": points}
 
-def process_chesscom_game_dict(game_dict, username):
 
+def process_chessdotcom_game_dict(game_dict, username):
     # take the game pgn
     pgn = game_dict['pgn']
 
@@ -71,16 +73,16 @@ def process_chesscom_game_dict(game_dict, username):
     opening_code = re.findall(opening_code_pattern, pgn)[0]
 
     # get color info
-    if game_dict["white"]["username"]==username:
+    if game_dict["white"]["username"] == username:
         color = "white"
-    elif game_dict["black"]["username"]==username:
+    elif game_dict["black"]["username"] == username:
         color = "black"
     else:
         logger.error('error in getting game color')
 
     # get points info
     # TODO figure out if it's a draw or not!
-    points = 1 if game_dict[color]["result"]=="win" else 0    
+    points = 1 if game_dict[color]["result"] == "win" else 0
 
     # return
     return {"opening_name": opening_name,
@@ -89,14 +91,16 @@ def process_chesscom_game_dict(game_dict, username):
             "color": color,
             "points": points}
 
-def is_legal_chesscom_game(game_dict):
+
+def is_legal_chessdotcom_game(game_dict):
     """
     Not all games have all requisite data. If they don't, return False; else, return True.
     """
     opening_name_pattern = r'\[ECOUrl "https:\/\/www\.chess\.com\/openings\/([\d\.a-zA-Z-]+)"]'
-    if len(re.findall(opening_name_pattern, game_dict['pgn']))==1:
+    if len(re.findall(opening_name_pattern, game_dict['pgn'])) == 1:
         return True
     return False
+
 
 def is_legal_lichess_game(game_dict):
     """
@@ -105,6 +109,7 @@ def is_legal_lichess_game(game_dict):
     if "opening" in game_dict:
         return True
     return False
+
 
 def is_lichess_user(lichess_username):
     """
@@ -116,11 +121,13 @@ def is_lichess_user(lichess_username):
     except lichess.api.ApiHttpError:
         return False
 
-def is_chesscom_user(chesscom_username):
-    player_dict = json.loads(requests.get(f"https://api.chess.com/pub/player/{chesscom_username}").content)
+
+def is_chessdotcom_user(chessdotcom_username):
+    player_dict = json.loads(requests.get(f"https://api.chess.com/pub/player/{chessdotcom_username}").content)
     if "player_id" in player_dict:
         return True
     return False
+
 
 def get_lichess_user_games_df(lichess_username, num_lookback_days):
     """
@@ -143,13 +150,14 @@ def get_lichess_user_games_df(lichess_username, num_lookback_days):
         "since": since,
         "max": MAX_LICHESS_GAMES}
     games = [process_lichess_game_dict(g, lichess_username)
-            for g in lichess.api.user_games(lichess_username, **query)
-            if is_legal_lichess_game(g)]
-    df = pd.DataFrame(games)
+             for g in lichess.api.user_games(lichess_username, **query)
+             if is_legal_lichess_game(g)]
+    df = pd.DataFrame(games, columns=GAMES_DF_COLUMNS)
     df["website"] = "lichess"
     return df
 
-def get_chesscom_user_games_df(chesscom_username, num_lookback_days):
+
+def get_chessdotcom_user_games_df(chessdotcom_username, num_lookback_days):
     """
     Get all the formatted chess.com games of a chess.com user.
 
@@ -161,23 +169,23 @@ def get_chesscom_user_games_df(chesscom_username, num_lookback_days):
         https://api.chess.com/pub/player/normanrookwell/games/2021/10
     """
 
-
     # get the query month range.
     # TODO: fix the hokey-ness forced by pd.date_range function
     dates = pd.date_range(dt.date.today() - dt.timedelta(days=num_lookback_days),
                           dt.date.today() + dt.timedelta(days=30),
                           freq="M")
-    
+
     # get all the games from all the months
-    games = [process_chesscom_game_dict(game, chesscom_username)
+    games = [process_chessdotcom_game_dict(game, chessdotcom_username)
              for date in dates
-             for game in get_chesscom_user_month_games(chesscom_username, date.year, date.month)
-             if is_legal_chesscom_game(game)]
-    
+             for game in get_chessdotcom_user_month_games(chessdotcom_username, date.year, date.month)
+             if is_legal_chessdotcom_game(game)]
+
     # return
-    df = pd.DataFrame(games)
+    df = pd.DataFrame(games, columns=GAMES_DF_COLUMNS)
     df["website"] = "chessdotcom"
     return df
+
 
 def get_user_opening_stats(chess_username: str, num_lookback_days=100, platform="lichess"):
     """
@@ -185,16 +193,21 @@ def get_user_opening_stats(chess_username: str, num_lookback_days=100, platform=
 
     Returns a 2-tuple (pd.DataFrame of white opening stats, pd.DataFrame of black opening stats)
     """
-    if platform=="lichess":
+    if platform == "lichess":
         games_df = get_lichess_user_games_df(chess_username, num_lookback_days)
-    if platform=="chesscom":
-        games_df = get_chesscom_user_games_df(chess_username, num_lookback_days)
-    if platform=="both":
-        games_df = pd.concat([get_chesscom_user_games_df(chess_username, num_lookback_days),
+    elif platform == "chessdotcom":
+        games_df = get_chessdotcom_user_games_df(chess_username, num_lookback_days)
+    elif platform == "both":
+        games_df = pd.concat([get_chessdotcom_user_games_df(chess_username, num_lookback_days),
                               get_lichess_user_games_df(chess_username, num_lookback_days)])
+    else:
+        logger.error("Platform got set to something besides 'lichess', 'chessdotcom', or 'both';"
+                     "displaying empty page.")
+        games_df = pd.DataFrame(columns=GAMES_DF_COLUMNS)
+
     opening_stats = {
         color: (games_df
-                [games_df["color"]==color]
+                [games_df["color"] == color]
                 .groupby("opening_name_simple")
                 ["points"]
                 .agg(["count", "mean"])
@@ -209,24 +222,27 @@ def get_user_opening_stats(chess_username: str, num_lookback_days=100, platform=
         for color in ["white", "black"]}
     return opening_stats
 
-def get_chesscom_user_month_games(chesscom_username, year, month):
+
+def get_chessdotcom_user_month_games(chessdotcom_username, year, month):
     """
-    Get the games for a chesscom user for one month:
+    Get the games for a chessdotcom user for one month:
 
     https://api.chess.com/pub/player/normanrookwell/games/2021/10
     """
-    url = f"https://api.chess.com/pub/player/{chesscom_username}/games/{year}/{month:02d}"
+    url = f"https://api.chess.com/pub/player/{chessdotcom_username}/games/{year}/{month:02d}"
     return json.loads(requests.get(url).content)['games']
 
-# main
-if __name__=="__main__":
 
+# main
+if __name__ == "__main__":
     # test name
     test_names = [
         "nikolaserdmann",
         "normanrookwell",
         "KorayKayir",
-        "madmaxmatze"
+        "madmaxmatze",
+        "Rooklord69"
     ]
-    for name in test_names:
-        print(get_user_opening_stats(chess_username="nikolaserdmann", num_games=100, num_lookback_days=200, platform="both"))
+    # for name in test_names:
+    #     print(get_user_opening_stats(chess_username=name, num_lookback_days=100, platform="both"))
+    print(get_user_opening_stats(chess_username="Rooklord69", num_lookback_days=100, platform="chescom"))

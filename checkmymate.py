@@ -21,12 +21,15 @@ def home():
         logger.info(f"platform: {platform}")
 
         # return the correct template, depending on user-input.
-        if platform=="lichess" and utils.is_lichess_user(chess_username)==False:
-            return render_template("index.html", error_name=chess_username, error_platform=platform)
-        elif platform=="chesscom" and utils.is_chesscom_user(chess_username)==False:
-            return render_template("index.html", error_name=chess_username, error_platform=platform)
-        elif platform=="both" and (utils.is_lichess_user(chess_username)==False or utils.is_chesscom_user(chess_username)==False):
-            return render_template("index.html", error_name=chess_username, error_platform="lichess or chess.com")
+        if (platform=="lichess" or platform=="both") and utils.is_lichess_user(chess_username)==False:
+            return render_template("index.html", error_name=chess_username, error_platform="lichess")
+
+        elif (platform=="chessdotcom" or platform=="both") and utils.is_chessdotcom_user(chess_username)==False:
+            return render_template("index.html", error_name=chess_username, error_platform="chess.com")
+
+        # elif platform=="both" and (utils.is_lichess_user(chess_username)==False or utils.is_chessdotcom_user(chess_username)==False):
+        #     return render_template("index.html", error_name=chess_username, error_platform="lichess or chess.com")
+
         else:
             return redirect(url_for("user",
                                     chess_username=chess_username,
@@ -37,7 +40,7 @@ def home():
     else:
         return render_template("index.html")
 
-@app.route("/<chess_username>/since-<num_lookback_days>/platform-<platform>")
+@app.route("/<chess_username>/since_<num_lookback_days>daysago/platform_<platform>")
 def user(chess_username, num_lookback_days, platform):
     opening_stats_struct = utils.get_user_opening_stats(chess_username=chess_username,
                                                         num_lookback_days=int(num_lookback_days),
