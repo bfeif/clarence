@@ -23,13 +23,8 @@ def home():
         # return the correct template, depending on user-input.
         if (platform=="lichess" or platform=="both") and utils.is_lichess_user(chess_username)==False:
             return render_template("index.html", error_name=chess_username, error_platform="lichess")
-
         elif (platform=="chessdotcom" or platform=="both") and utils.is_chessdotcom_user(chess_username)==False:
             return render_template("index.html", error_name=chess_username, error_platform="chess.com")
-
-        # elif platform=="both" and (utils.is_lichess_user(chess_username)==False or utils.is_chessdotcom_user(chess_username)==False):
-        #     return render_template("index.html", error_name=chess_username, error_platform="lichess or chess.com")
-
         else:
             return redirect(url_for("user",
                                     chess_username=chess_username,
