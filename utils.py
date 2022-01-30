@@ -15,7 +15,7 @@ import logging
 import json
 import datetime as dt
 import requests
-from flask import Flask
+from flask import Flask, request
 
 app = Flask(__name__)
 logger = app.logger
@@ -61,7 +61,7 @@ def process_lichess_game_dict(game_dict, username):
             "points": points}
 
 
-def process_chessdotcom_game_dict(game_dict, username):
+def process_chessdotcom_game_dict(game_dict, chessdotcom_player_id_url):
     # take the game pgn
     pgn = game_dict['pgn']
 
@@ -73,9 +73,9 @@ def process_chessdotcom_game_dict(game_dict, username):
     opening_code = re.findall(opening_code_pattern, pgn)[0]
 
     # get color info
-    if game_dict["white"]["username"] == username:
+    if game_dict["white"]["@id"] == chessdotcom_player_id_url:
         color = "white"
-    elif game_dict["black"]["username"] == username:
+    elif game_dict["black"]["@id"] == chessdotcom_player_id_url:
         color = "black"
     else:
         logger.error('error in getting game color')
@@ -170,13 +170,18 @@ def get_chessdotcom_user_games_df(chessdotcom_username, num_lookback_days):
     # get the query month range.
     # TODO: fix the hokey-ness forced by pd.date_range function
     dates = pd.date_range(dt.date.today() - dt.timedelta(days=num_lookback_days),
-                          dt.date.today() + dt.timedelta(days=30),
+                          dt.date.today(),  # + dt.timedelta(days=30),
                           freq="M")
 
+    # Get the player @id from their player profile endpoint. The chess.com api is undecided about case-sensitivity
+    # in the username and username vs player name, so using @id to process the game is safer.
+    # Additionally, this line is only ever run once "is_chessdotcom_user" has been checked, so there is no need for checking.
+    chessdotcom_player_id_url = json.loads(requests.get(f"https://api.chess.com/pub/player/{chessdotcom_username}").content)["@id"]
+
     # get all the games from all the months
-    games = [process_chessdotcom_game_dict(game, chessdotcom_username)
+    games = [process_chessdotcom_game_dict(game, chessdotcom_player_id_url)
              for date in dates
-             for game in get_chessdotcom_user_month_games(chessdotcom_username, date.year, date.month)
+             for game in get_chessdotcom_user_month_games(chessdotcom_player_id_url, date.year, date.month)
              if is_legal_chessdotcom_game(game)]
 
     # return
@@ -221,13 +226,17 @@ def get_user_opening_stats(chess_username: str, num_lookback_days=100, platform=
     return opening_stats
 
 
-def get_chessdotcom_user_month_games(chessdotcom_username, year, month):
+def get_chessdotcom_user_month_games(chessdotcom_player_id_url, year, month):
     """
     Get the games for a chessdotcom user for one month:
 
     https://api.chess.com/pub/player/normanrookwell/games/2021/10
+    chessdotcom_player_id_url = "https://api.chess.com/pub/player/normanrookwell"
+    year = 2021
+    month = 10
     """
-    url = f"https://api.chess.com/pub/player/{chessdotcom_username}/games/{year}/{month:02d}"
+    url = f"{chessdotcom_player_id_url}/games/{year}/{month:02d}"
+    logger.debug(f"Getting games from {url}.")
     return json.loads(requests.get(url).content)['games']
 
 
