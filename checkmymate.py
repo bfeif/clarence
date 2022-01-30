@@ -18,7 +18,7 @@ def home():
         chess_username = chess_username if chess_username else " "
         num_lookback_days = request.form["num_lookback_days"]
         platform = request.form["platform"]
-        logger.info(f"platform: {platform}")
+        logger.debug(f"platform: {platform}")
 
         # return the correct template, depending on user-input.
         if (platform=="lichess" or platform=="both") and utils.is_lichess_user(chess_username)==False:
