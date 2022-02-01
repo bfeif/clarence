@@ -1,28 +1,65 @@
-<title>{% block title %}{% endblock %} - CheckMyMate</title>
+<style>
+    .footer {
+        clear: both;
+        position: relative;
+    }
+    #wrap {
+        padding: 10px;
+        min-height: -webkit-calc(100% - 100px);     /* Chrome */
+        min-height: -moz-calc(100% - 100px);     /* Firefox */
+        min-height: calc(100% - 100px);     /* native */
+    }
+    html, body {
+        height: 100%;
+        margin: 0;
+    }
+</style>
 
-<!-- Fonts -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css"
-            rel='stylesheet' type='text/css' />
-<!-- Bootstrap CSS -->
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-            rel="stylesheet" />
+<head>
+    <title>CheckMyMate {% block title %}{% endblock %}</title>
 
+    <!-- Fonts -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css"
+                rel='stylesheet' type='text/css' />
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+                rel="stylesheet" />
+</head>
 
-<section class="content">
-    <br/>
-    <div class="container">
-        <a href='/'><h1 class="jumbotron-heading text-center">checkmymate.co</h1></a>
-    </div>
+<body>
+    <section class="content" id="wrap">
+        <br/>
+        <div class="container">
+            <a href='/'><h1 class="jumbotron-heading text-center">checkmymate.co</h1></a>
+        </div>
 
-    <div class="container">
-        <header>
-            {% block header %}{% endblock %}
-        </header>
-        {% block content %}{% endblock %}
-    </div>
-</section>
+        <div class="container">
+            <header>
+                {% block header %}{% endblock %}
+            </header>
+            {% block content %}{% endblock %}
+        </div>
+    </section>
+    <!-- <footer class="fixed-bottom bg-dark text-center text-white"> -->
+    <footer class="footer bg-dark text-center text-white p-4">
+        <div class="container">
+            Contact: 
+            <a href="https://github.com/bfeif/clarence"><i class="fa fa-github fa-2x"></i></a>
+            <a href="https://www.linkedin.com/in/benjamin-feifke/"><i class="fa fa-linkedin fa-2x"></i></a>
+            <a href="https://lichess.org/@/normanrookwell"><span class="iconify fa-2x" data-icon="simple-icons:lichess"></span></a>
+            <a href="https://www.chess.com/member/normanrookwell"><i class="fas fa-chess-pawn" style='font-size:36px'></i></a>
+        </div>
+    </footer>
+</body>
+
 
 <!-- Bootstrap related JavaScript -->
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+<!-- Lichess icon -->
+<script src="https://code.iconify.design/2/2.1.2/iconify.min.js"></script>
+
+<!-- chess.com -->
+<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
