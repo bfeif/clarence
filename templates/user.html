@@ -1,17 +1,26 @@
-{% extends 'base.html' %}
-{% block content %}
+<style>
+/* .tablecenterheadCSS th{
+	text-align:center;
+} td{
+	text-align:center;
+} */
+</style>
 
+{% extends 'base.html' %}
+{% block title %}- {{ chess_username }}{% endblock %}
+
+{% block content %}
 <h3 class="jumbotron-heading text-center"> {{ chess_username }}'s most common openings </h3>
 </br>
 {% for color in ["white", "black"] %}
     <div class="text-center"><h5>{{ {"white": "White", "black": "Black"}[color] }}</h5></div>
 
-    <table class="table">
+    <table class="table tablecenterheadCSS">
         <thead>
             <tr>
                 <th>Opening</th>
                 <th>Number of Games</th>
-                <th>Avg Points per Game</th>
+                <th>Avg Points per Game [0-1]</th>
             </tr>
         </thead>
         <tbody>
