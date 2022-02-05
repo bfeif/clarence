@@ -123,7 +123,8 @@ def is_lichess_user(lichess_username):
 
 
 def is_chessdotcom_user(chessdotcom_username):
-    player_dict = json.loads(requests.get(f"https://api.chess.com/pub/player/{chessdotcom_username}").content)
+    url = f"https://api.chess.com/pub/player/{chessdotcom_username}"
+    player_dict = json.loads(requests.get(url).content)
     if "player_id" in player_dict:
         return True
     return False
