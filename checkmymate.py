@@ -15,7 +15,7 @@ def home():
 
         # get field values from the form
         chess_username = request.form["chess_username"]
-        chess_username = chess_username if chess_username else " "
+        chess_username = chess_username.strip() if chess_username else " "  # Clean the string input with .strip().
         num_lookback_days = request.form["num_lookback_days"]
         platform = request.form["platform"]
         logger.debug(f"platform: {platform}")
