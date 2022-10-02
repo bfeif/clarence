@@ -16,6 +16,6 @@ This project encourages the built-in python `venv` tool for managing virtual env
 4. `pip install -r requirements.txt` - Install all necessary packages to the virtual environment.
 
 ### Launch the flask app
-With the virtual environment activated, launch the flask app with `flask run`.  
-A bunch of text will pop up in your terminal, one of which will say something like `Running on http://127.0.0.1:5000/`. Copy and paste this url to your web-browser.  
-Great! Now you have the application running locally, and you should be able to see the changes you make in the code automatically update in your browser!
+1. With the virtual environment activated, launch the flask app with `flask run`.
+2. A bunch of text will pop up in your terminal, one of which will say something like `Running on http://127.0.0.1:5000/`. Copy and paste this url to your web-browser. 
+3. Great! Now you have the application running locally, and you should be able to see the changes you make in the code automatically update in your browser!
